@@ -32,7 +32,7 @@ class Personaje {
 public:
     Personaje(sf::Vector2f position, sf::Color color, const std::string& imagePath) {
         // Inicializar el cuerpo
-        shape.setSize(sf::Vector2f(50, 50));
+        shape.setSize(sf::Vector2f(30, 50));
         shape.setPosition(position);
         shape.setFillColor(color);
 
@@ -44,6 +44,8 @@ public:
         imageSprite.setScale(0.5f, 0.5f); // Escalar imagen si es necesario
         updateImagePosition();
     }
+
+    
 
     void move(float offsetX, float offsetY) {
         shape.move(offsetX, offsetY);
@@ -73,10 +75,22 @@ private:
     sf::Sprite imageSprite;
 
     void updateImagePosition() {
-        // Ajustar la posición del sprite justo encima del jugador
-        sf::Vector2f position = shape.getPosition();
-        imageSprite.setPosition(position.x, position.y - 50); // 50 píxeles arriba
+    // Ajustar el tamaño de la imagen para que sea proporcional al rectángulo del personaje
+    float scaleFactorX = shape.getSize().x / 200;
+    float scaleFactorY = shape.getSize().y / 200;
+    float scaleFactor = std::min(scaleFactorX, scaleFactorY); // Mantener proporción
+    imageSprite.setScale(scaleFactor, scaleFactor);
+
+    // Centrar la imagen sobre el rectángulo
+    sf::FloatRect spriteBounds = imageSprite.getGlobalBounds();
+    sf::Vector2f position = shape.getPosition();
+    imageSprite.setPosition(
+        position.x + (shape.getSize().x - spriteBounds.width) / 2, // Centrar en X
+        position.y + (shape.getSize().y - spriteBounds.height) / 2 // Centrar en Y
+    );
     }
+
+    
 };
 
 double velocidad = 0.1;
@@ -103,8 +117,8 @@ int main() {
     backgroundSprite.setScale(scaleX, scaleY);
 
     // Crear los personajes con sus imágenes
-    Personaje character(sf::Vector2f(400, 300), sf::Color::Red, "C:/Users/1105334954/Downloads/J2.png");
-    Personaje character2(sf::Vector2f(200, 300), sf::Color::Blue, "C:/Users/1105334954/Downloads/J1.png");
+    Personaje character(sf::Vector2f(400, 300), sf::Color::Red, "C:/Users/1105334954/Downloads/jug1.png");
+    Personaje character2(sf::Vector2f(200, 300), sf::Color::Blue, "C:/Users/1105334954/Downloads/jug2.png");
 
     // Lista de proyectiles
     std::vector<Projectile> projectiles;
