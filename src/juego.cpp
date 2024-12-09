@@ -136,7 +136,7 @@ int main() {
 
     // Cargar fuente para mostrar vidas
     sf::Font font;
-    if (!font.loadFromFile("C:/path/to/font.ttf")) {
+    if (!font.loadFromFile("./assets/Minecraft.ttf")) {
         std::cerr << "Error: No se pudo cargar la fuente.\n";
         return -1;
     }
