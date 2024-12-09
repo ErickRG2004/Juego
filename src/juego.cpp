@@ -15,7 +15,7 @@ public:
         shape.move(velocity);
     }
 
-    void draw(sf::RenderWindow& window) {
+    void draw(sf::RenderWindow& window) const {
         window.draw(shape);
     }
 
@@ -30,22 +30,18 @@ private:
 
 class Personaje {
 public:
-    Personaje(sf::Vector2f position, sf::Color color, const std::string& imagePath) {
-        // Inicializar el cuerpo
+    Personaje(sf::Vector2f position, sf::Color color, const std::string& imagePath) : vidas(3) {
         shape.setSize(sf::Vector2f(30, 50));
         shape.setPosition(position);
         shape.setFillColor(color);
 
-        // Cargar la textura de la imagen
         if (!imageTexture.loadFromFile(imagePath)) {
             std::cerr << "Error: No se pudo cargar la imagen del personaje.\n";
         }
         imageSprite.setTexture(imageTexture);
-        imageSprite.setScale(0.5f, 0.5f); // Escalar imagen si es necesario
+        imageSprite.setScale(0.5f, 0.5f);
         updateImagePosition();
     }
-
-    
 
     void move(float offsetX, float offsetY) {
         shape.move(offsetX, offsetY);
@@ -58,6 +54,20 @@ public:
             projectiles.emplace_back(position, direction, speed);
             clock.restart();
         }
+    }
+
+    void perderVida() {
+        if (vidas > 0) {
+            vidas--;
+        }
+    }
+
+    int getVidas() const {
+        return vidas;
+    }
+
+    bool estaVivo() const {
+        return vidas > 0;
     }
 
     void draw(sf::RenderWindow& window) {
@@ -73,27 +83,24 @@ private:
     sf::RectangleShape shape;
     sf::Texture imageTexture;
     sf::Sprite imageSprite;
+    int vidas;
 
     void updateImagePosition() {
-    // Ajustar el tamaño de la imagen para que sea proporcional al rectángulo del personaje
-    float scaleFactorX = shape.getSize().x / 200;
-    float scaleFactorY = shape.getSize().y / 200;
-    float scaleFactor = std::min(scaleFactorX, scaleFactorY); // Mantener proporción
-    imageSprite.setScale(scaleFactor, scaleFactor);
+        float scaleFactorX = shape.getSize().x / 200;
+        float scaleFactorY = shape.getSize().y / 200;
+        float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+        imageSprite.setScale(scaleFactor, scaleFactor);
 
-    // Centrar la imagen sobre el rectángulo
-    sf::FloatRect spriteBounds = imageSprite.getGlobalBounds();
-    sf::Vector2f position = shape.getPosition();
-    imageSprite.setPosition(
-        position.x + (shape.getSize().x - spriteBounds.width) / 2, // Centrar en X
-        position.y + (shape.getSize().y - spriteBounds.height) / 2 // Centrar en Y
-    );
+        sf::FloatRect spriteBounds = imageSprite.getGlobalBounds();
+        sf::Vector2f position = shape.getPosition();
+        imageSprite.setPosition(
+            position.x + (shape.getSize().x - spriteBounds.width) / 2,
+            position.y + (shape.getSize().y - spriteBounds.height) / 2
+        );
     }
-
-    
 };
 
-double velocidad = 0.1;
+double velocidad = 0.2;
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(1200, 800), "DinoChrome");
@@ -123,12 +130,23 @@ int main() {
     // Lista de proyectiles
     std::vector<Projectile> projectiles;
 
-    float speedCharacter1 = 0.5f;
-    float speedCharacter2 = 0.5f;
-
     float fireDelay = 0.5f;
     sf::Clock clock1;
     sf::Clock clock2;
+
+    // Cargar fuente para mostrar vidas
+    sf::Font font;
+    if (!font.loadFromFile("C:/path/to/font.ttf")) {
+        std::cerr << "Error: No se pudo cargar la fuente.\n";
+        return -1;
+    }
+
+    // Crear textos para mostrar vidas
+    sf::Text vidasP1("Vidas: 3", font, 20);
+    sf::Text vidasP2("Vidas: 3", font, 20);
+
+    vidasP1.setPosition(10, 10);
+    vidasP2.setPosition(1100, 10);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -140,13 +158,13 @@ int main() {
 
         // Movimiento del personaje 1
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            character.move(velocidad * -1, 0);
+            character.move(-velocidad, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             character.move(velocidad, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            character.move(0, velocidad * -1);
+            character.move(0, -velocidad);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             character.move(0, velocidad);
@@ -154,13 +172,13 @@ int main() {
 
         // Movimiento del personaje 2
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            character2.move(velocidad * -1, 0);
+            character2.move(-velocidad, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             character2.move(velocidad, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-            character2.move(0, velocidad * -1);
+            character2.move(0, -velocidad);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             character2.move(0, velocidad);
@@ -168,27 +186,59 @@ int main() {
 
         // Disparo del personaje 1
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            character.shoot(projectiles, sf::Vector2f(-1, 0), speedCharacter1, clock1, fireDelay);
+            character.shoot(projectiles, sf::Vector2f(-1, 0), 5.f, clock1, fireDelay);
         }
 
         // Disparo del personaje 2
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-            character2.shoot(projectiles, sf::Vector2f(1, 0), speedCharacter2, clock2, fireDelay);
+            character2.shoot(projectiles, sf::Vector2f(1, 0), 5.f, clock2, fireDelay);
         }
 
-        // Actualizar proyectiles
-        for (auto& projectile : projectiles) {
-            projectile.update();
+        // Actualizar proyectiles y detectar colisiones
+        for (auto it = projectiles.begin(); it != projectiles.end();) {
+            it->update();
+            bool impactado = false;
+
+            if (character.getBounds().intersects(it->getBounds())) {
+                character.perderVida();
+                impactado = true;
+            }
+            if (character2.getBounds().intersects(it->getBounds())) {
+                character2.perderVida();
+                impactado = true;
+            }
+
+            if (impactado) {
+                it = projectiles.erase(it);
+            } else {
+                ++it;
+            }
         }
+
+        // Verificar si algún personaje perdió todas las vidas
+        if (!character.estaVivo()) {
+            std::cout << "¡El personaje 1 ha perdido todas sus vidas! El jugador 2 gana.\n";
+            window.close();
+        }
+        if (!character2.estaVivo()) {
+            std::cout << "¡El personaje 2 ha perdido todas sus vidas! El jugador 1 gana.\n";
+            window.close();
+        }
+
+        // Actualizar textos de vidas
+        vidasP1.setString("Vidas: " + std::to_string(character.getVidas()));
+        vidasP2.setString("Vidas: " + std::to_string(character2.getVidas()));
 
         // Dibujar todo
         window.clear();
-        window.draw(backgroundSprite); // Dibujar la imagen de fondo
+        window.draw(backgroundSprite);
         character.draw(window);
         character2.draw(window);
-        for (auto& projectile : projectiles) {
+        for (const auto& projectile : projectiles) {
             projectile.draw(window);
         }
+        window.draw(vidasP1);
+        window.draw(vidasP2);
         window.display();
     }
 
