@@ -50,7 +50,7 @@ public:
 
     void shoot(std::vector<Projectile>& projectiles, sf::Vector2f direction, float speed, sf::Clock& clock, float delay) {
         if (clock.getElapsedTime().asSeconds() >= delay) {
-            sf::Vector2f position = shape.getPosition() + sf::Vector2f(shape.getSize().x / 2, shape.getSize().y / 2);
+            sf::Vector2f position = shape.getPosition() + sf::Vector2f(shape.getSize().x, shape.getSize().y);
             projectiles.emplace_back(position, direction, speed);
             clock.restart();
         }
@@ -95,7 +95,7 @@ private:
         sf::Vector2f position = shape.getPosition();
         imageSprite.setPosition(
             position.x + (shape.getSize().x - spriteBounds.width) / 2,
-            position.y + (shape.getSize().y - spriteBounds.height) / 2
+            position.y + (shape.getSize().y - spriteBounds.height) / 1.3
         );
     }
 };
@@ -124,8 +124,8 @@ int main() {
     backgroundSprite.setScale(scaleX, scaleY);
 
     // Crear los personajes con sus imágenes
-    Personaje character(sf::Vector2f(400, 300), sf::Color::Red, "C:/Users/1105334954/Downloads/jug1.png");
-    Personaje character2(sf::Vector2f(200, 300), sf::Color::Blue, "C:/Users/1105334954/Downloads/jug2.png");
+    Personaje character(sf::Vector2f(1000, 400), sf::Color::Red, "C:/Users/1105334954/Downloads/jug1.png");
+    Personaje character2(sf::Vector2f(200, 400), sf::Color::Blue, "C:/Users/1105334954/Downloads/jug2.png");
 
     // Lista de proyectiles
     std::vector<Projectile> projectiles;
@@ -135,18 +135,18 @@ int main() {
     sf::Clock clock2;
 
     // Cargar fuente para mostrar vidas
-    sf::Font font;
+    /*sf::Font font;
     if (!font.loadFromFile("./assets/Minecraft.ttf")) {
         std::cerr << "Error: No se pudo cargar la fuente.\n";
         return -1;
-    }
+    }*/
 
     // Crear textos para mostrar vidas
-    sf::Text vidasP1("Vidas: 3", font, 20);
-    sf::Text vidasP2("Vidas: 3", font, 20);
+    /*sf::Text vidasP1("Vidas: 3", font, 20);
+    sf::Text vidasP2("Vidas: 3", font, 20);*/
 
-    vidasP1.setPosition(10, 10);
-    vidasP2.setPosition(1100, 10);
+    /*vidasP1.setPosition(10, 10);
+    vidasP2.setPosition(1100, 10);*/
 
     while (window.isOpen()) {
         sf::Event event;
@@ -226,8 +226,8 @@ int main() {
         }
 
         // Actualizar textos de vidas
-        vidasP1.setString("Vidas: " + std::to_string(character.getVidas()));
-        vidasP2.setString("Vidas: " + std::to_string(character2.getVidas()));
+        /*vidasP1.setString("Vidas: " + std::to_string(character.getVidas()));
+        vidasP2.setString("Vidas: " + std::to_string(character2.getVidas()));*/
 
         // Dibujar todo
         window.clear();
@@ -237,8 +237,8 @@ int main() {
         for (const auto& projectile : projectiles) {
             projectile.draw(window);
         }
-        window.draw(vidasP1);
-        window.draw(vidasP2);
+        /*window.draw(vidasP1);
+        window.draw(vidasP2);*/
         window.display();
     }
 
