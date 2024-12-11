@@ -2,6 +2,66 @@
 #include <vector>
 #include <iostream>
 
+class Tronco {
+public:
+    Tronco(sf::Vector2f position) {
+        shape.setSize(sf::Vector2f(30, 50));
+        shape.setPosition(position);
+        shape.setFillColor(sf::Color::Black);
+    }
+
+    void draw(sf::RenderWindow& window) const {
+        window.draw(shape);
+    }
+
+    sf::FloatRect getBounds() const {
+        return shape.getGlobalBounds();
+    }
+
+private:
+    sf::RectangleShape shape;
+};
+
+class Roca2 {
+public:
+    Roca2(sf::Vector2f position) {
+        shape.setRadius(10.f);
+        shape.setFillColor(sf::Color::Black);
+        shape.setPosition(position);
+    }
+
+    void draw(sf::RenderWindow& window) const {
+        window.draw(shape);
+    }
+
+    sf::FloatRect getBounds() const {
+        return shape.getGlobalBounds();
+    }
+
+private:
+    sf::CircleShape shape;
+};
+
+class Roca1 {
+public:
+    Roca1(sf::Vector2f position) {
+        shape.setRadius(10.f);
+        shape.setFillColor(sf::Color::Black);
+        shape.setPosition(position);
+    }
+
+    void draw(sf::RenderWindow& window) const {
+        window.draw(shape);
+    }
+
+    sf::FloatRect getBounds() const {
+        return shape.getGlobalBounds();
+    }
+
+private:
+    sf::CircleShape shape;
+};
+
 class Projectile {
 public:
     Projectile(sf::Vector2f position, sf::Vector2f direction, float speed) {
@@ -105,48 +165,33 @@ double velocidad = 0.2;
 int main() {
     sf::RenderWindow window(sf::VideoMode(1200, 800), "DinoChrome");
 
-    // Cargar la textura del fondo
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("C:/Users/1105334954/Downloads/campo.jpg")) {
         std::cerr << "Error: No se pudo cargar la imagen de fondo.\n";
         return -1;
     }
 
-    // Crear el sprite del fondo
     sf::Sprite backgroundSprite;
     backgroundSprite.setTexture(backgroundTexture);
 
-    // Ajustar el tamaño del fondo al de la ventana
     sf::Vector2u textureSize = backgroundTexture.getSize();
     sf::Vector2u windowSize = window.getSize();
     float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
     float scaleY = static_cast<float>(windowSize.y) / textureSize.y;
     backgroundSprite.setScale(scaleX, scaleY);
 
-    // Crear los personajes con sus imágenes
     Personaje character(sf::Vector2f(1000, 400), sf::Color::Red, "C:/Users/1105334954/Downloads/jug1.png");
     Personaje character2(sf::Vector2f(200, 400), sf::Color::Blue, "C:/Users/1105334954/Downloads/jug2.png");
 
-    // Lista de proyectiles
+    Roca1 roca1(sf::Vector2f(500, 400));
+    Roca2 roca2(sf::Vector2f(300, 200));
+    Tronco tronco1(sf::Vector2f(700, 300));
+
     std::vector<Projectile> projectiles;
 
     float fireDelay = 0.5f;
     sf::Clock clock1;
     sf::Clock clock2;
-
-    // Cargar fuente para mostrar vidas
-    /*sf::Font font;
-    if (!font.loadFromFile("./assets/Minecraft.ttf")) {
-        std::cerr << "Error: No se pudo cargar la fuente.\n";
-        return -1;
-    }*/
-
-    // Crear textos para mostrar vidas
-    /*sf::Text vidasP1("Vidas: 3", font, 20);
-    sf::Text vidasP2("Vidas: 3", font, 20);*/
-
-    /*vidasP1.setPosition(10, 10);
-    vidasP2.setPosition(1100, 10);*/
 
     while (window.isOpen()) {
         sf::Event event;
@@ -156,7 +201,53 @@ int main() {
             }
         }
 
-        // Movimiento del personaje 1
+        std::vector<sf::FloatRect> obstacleBounds = {
+            roca1.getBounds(),
+            roca2.getBounds(),
+            tronco1.getBounds()
+        };
+
+        for (const auto& bounds : obstacleBounds) {
+    // Colisión para el primer personaje
+    if (character.getBounds().intersects(bounds)) {
+        sf::FloatRect characterBounds = character.getBounds();
+
+        if (characterBounds.left < bounds.left && characterBounds.left + characterBounds.width > bounds.left) {
+            // Colisión desde la izquierda
+            character.move(-velocidad, 0);
+        } else if (characterBounds.left > bounds.left && characterBounds.left < bounds.left + bounds.width) {
+            // Colisión desde la derecha
+            character.move(velocidad, 0);
+        } else if (characterBounds.top < bounds.top && characterBounds.top + characterBounds.height > bounds.top) {
+            // Colisión desde arriba
+            character.move(0, -velocidad);
+        } else if (characterBounds.top > bounds.top && characterBounds.top < bounds.top + bounds.height) {
+            // Colisión desde abajo
+            character.move(0, velocidad);
+        }
+    }
+
+    // Colisión para el segundo personaje
+    if (character2.getBounds().intersects(bounds)) {
+        sf::FloatRect character2Bounds = character2.getBounds();
+
+        if (character2Bounds.left < bounds.left && character2Bounds.left + character2Bounds.width > bounds.left) {
+            // Colisión desde la izquierda
+            character2.move(-velocidad, 0);
+        } else if (character2Bounds.left > bounds.left && character2Bounds.left < bounds.left + bounds.width) {
+            // Colisión desde la derecha
+            character2.move(velocidad, 0);
+        } else if (character2Bounds.top < bounds.top && character2Bounds.top + character2Bounds.height > bounds.top) {
+            // Colisión desde arriba
+            character2.move(0, -velocidad);
+        } else if (character2Bounds.top > bounds.top && character2Bounds.top < bounds.top + bounds.height) {
+            // Colisión desde abajo
+            character2.move(0, velocidad);
+        }
+    }
+}
+
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             character.move(-velocidad, 0);
         }
@@ -170,7 +261,6 @@ int main() {
             character.move(0, velocidad);
         }
 
-        // Movimiento del personaje 2
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             character2.move(-velocidad, 0);
         }
@@ -184,12 +274,10 @@ int main() {
             character2.move(0, velocidad);
         }
 
-        // Disparo del personaje 1
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             character.shoot(projectiles, sf::Vector2f(-1, 0), 5.f, clock1, fireDelay);
         }
 
-        // Disparo del personaje 2
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
             character2.shoot(projectiles, sf::Vector2f(1, 0), 5.f, clock2, fireDelay);
         }
@@ -197,8 +285,18 @@ int main() {
         // Actualizar proyectiles y detectar colisiones
         for (auto it = projectiles.begin(); it != projectiles.end();) {
             it->update();
+
             bool impactado = false;
 
+            // Detectar colisión con los obstáculos
+            for (const auto& bounds : obstacleBounds) {
+                if (it->getBounds().intersects(bounds)) {
+                    impactado = true;
+                    break;
+                }
+            }
+
+            // Detectar colisión con los personajes
             if (character.getBounds().intersects(it->getBounds())) {
                 character.perderVida();
                 impactado = true;
@@ -225,20 +323,21 @@ int main() {
             window.close();
         }
 
-        // Actualizar textos de vidas
-        /*vidasP1.setString("Vidas: " + std::to_string(character.getVidas()));
-        vidasP2.setString("Vidas: " + std::to_string(character2.getVidas()));*/
-
-        // Dibujar todo
+        // Dibujar todo en pantalla
         window.clear();
         window.draw(backgroundSprite);
+
         character.draw(window);
         character2.draw(window);
+
+        roca1.draw(window);
+        roca2.draw(window);
+        tronco1.draw(window);
+
         for (const auto& projectile : projectiles) {
             projectile.draw(window);
         }
-        /*window.draw(vidasP1);
-        window.draw(vidasP2);*/
+
         window.display();
     }
 
