@@ -4,14 +4,23 @@
 
 class Tronco {
 public:
-    Tronco(sf::Vector2f position) {
-        shape.setSize(sf::Vector2f(30, 50));
+    Tronco(sf::Vector2f position, const std::string& imagePath) {
+        shape.setSize(sf::Vector2f(70, 150));
         shape.setPosition(position);
         shape.setFillColor(sf::Color::Black);
+
+        if (!imageTexture.loadFromFile(imagePath)) {
+            std::cerr << "Error: No se pudo cargar la imagen del personaje.\n";
+        }
+        imageSprite.setTexture(imageTexture);
+        imageSprite.setScale(0.5f, 0.5f);
+        updateImagePosition();
     }
+    
 
     void draw(sf::RenderWindow& window) const {
         window.draw(shape);
+        window.draw(imageSprite);
     }
 
     sf::FloatRect getBounds() const {
@@ -20,18 +29,43 @@ public:
 
 private:
     sf::RectangleShape shape;
+    sf::Texture imageTexture;
+    sf::Sprite imageSprite;
+
+    void updateImagePosition() {
+        float scaleFactorX = shape.getSize().x / 90;
+        float scaleFactorY = shape.getSize().y / 90;
+        float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+        imageSprite.setScale(scaleFactor, scaleFactor);
+
+        sf::FloatRect spriteBounds = imageSprite.getGlobalBounds();
+        sf::Vector2f position = shape.getPosition();
+        imageSprite.setPosition(
+            position.x + (shape.getSize().x - spriteBounds.width) / 2,
+            position.y + (shape.getSize().y - spriteBounds.height) / 2.3
+        );
+    }
 };
 
 class Roca2 {
 public:
-    Roca2(sf::Vector2f position) {
-        shape.setRadius(10.f);
-        shape.setFillColor(sf::Color::Black);
+    Roca2(sf::Vector2f position, const std::string& imagePath) {
+        shape.setSize(sf::Vector2f(70, 70));
         shape.setPosition(position);
+        shape.setFillColor(sf::Color::Black);
+
+        if (!imageTexture.loadFromFile(imagePath)) {
+            std::cerr << "Error: No se pudo cargar la imagen del personaje.\n";
+        }
+        imageSprite.setTexture(imageTexture);
+        imageSprite.setScale(0.5f, 0.5f);
+        updateImagePosition();
     }
+    
 
     void draw(sf::RenderWindow& window) const {
         window.draw(shape);
+        window.draw(imageSprite);
     }
 
     sf::FloatRect getBounds() const {
@@ -39,19 +73,44 @@ public:
     }
 
 private:
-    sf::CircleShape shape;
+    sf::RectangleShape shape;
+    sf::Texture imageTexture;
+    sf::Sprite imageSprite;
+
+    void updateImagePosition() {
+        float scaleFactorX = shape.getSize().x / 130;
+        float scaleFactorY = shape.getSize().y / 130;
+        float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+        imageSprite.setScale(scaleFactor, scaleFactor);
+
+        sf::FloatRect spriteBounds = imageSprite.getGlobalBounds();
+        sf::Vector2f position = shape.getPosition();
+        imageSprite.setPosition(
+            position.x + (shape.getSize().x - spriteBounds.width) / 2,
+            position.y + (shape.getSize().y - spriteBounds.height) / 1.7
+        );
+    }
 };
 
 class Roca1 {
 public:
-    Roca1(sf::Vector2f position) {
-        shape.setRadius(10.f);
-        shape.setFillColor(sf::Color::Black);
+    Roca1(sf::Vector2f position, const std::string& imagePath) {
+        shape.setSize(sf::Vector2f(70, 70));
         shape.setPosition(position);
+        shape.setFillColor(sf::Color::Black);
+
+        if (!imageTexture.loadFromFile(imagePath)) {
+            std::cerr << "Error: No se pudo cargar la imagen del personaje.\n";
+        }
+        imageSprite.setTexture(imageTexture);
+        imageSprite.setScale(0.5f, 0.5f);
+        updateImagePosition();
     }
+    
 
     void draw(sf::RenderWindow& window) const {
         window.draw(shape);
+        window.draw(imageSprite);
     }
 
     sf::FloatRect getBounds() const {
@@ -59,7 +118,23 @@ public:
     }
 
 private:
-    sf::CircleShape shape;
+    sf::RectangleShape shape;
+    sf::Texture imageTexture;
+    sf::Sprite imageSprite;
+
+    void updateImagePosition() {
+        float scaleFactorX = shape.getSize().x / 750;
+        float scaleFactorY = shape.getSize().y / 750;
+        float scaleFactor = std::min(scaleFactorX, scaleFactorY);
+        imageSprite.setScale(scaleFactor, scaleFactor);
+
+        sf::FloatRect spriteBounds = imageSprite.getGlobalBounds();
+        sf::Vector2f position = shape.getPosition();
+        imageSprite.setPosition(
+            position.x + (shape.getSize().x - spriteBounds.width) / 1.8,
+            position.y + (shape.getSize().y - spriteBounds.height) / 1.8
+        );
+    }
 };
 
 class Projectile {
@@ -183,9 +258,12 @@ int main() {
     Personaje character(sf::Vector2f(1000, 400), sf::Color::Red, "C:/Users/1105334954/Downloads/jug1.png");
     Personaje character2(sf::Vector2f(200, 400), sf::Color::Blue, "C:/Users/1105334954/Downloads/jug2.png");
 
-    Roca1 roca1(sf::Vector2f(500, 400));
-    Roca2 roca2(sf::Vector2f(300, 200));
-    Tronco tronco1(sf::Vector2f(700, 300));
+    Roca1 roca1(sf::Vector2f(250, 500), "C:/Users/1105334954/Downloads/roca1.png");
+    Roca1 roca2(sf::Vector2f(800, 100), "C:/Users/1105334954/Downloads/roca1.png");
+    Roca2 roca3(sf::Vector2f(450, 600), "C:/Users/1105334954/Downloads/roca2.png");
+    Roca2 roca4(sf::Vector2f(700, 300), "C:/Users/1105334954/Downloads/roca2.png");
+    Tronco tronco1(sf::Vector2f(400, 150), "C:/Users/1105334954/Downloads/tronco.png");
+    Tronco tronco2(sf::Vector2f(800, 500), "C:/Users/1105334954/Downloads/tronco.png");
 
     std::vector<Projectile> projectiles;
 
@@ -204,7 +282,10 @@ int main() {
         std::vector<sf::FloatRect> obstacleBounds = {
             roca1.getBounds(),
             roca2.getBounds(),
-            tronco1.getBounds()
+            roca3.getBounds(),
+            roca4.getBounds(),
+            tronco1.getBounds(),
+            tronco2.getBounds()
         };
 
         for (const auto& bounds : obstacleBounds) {
@@ -332,7 +413,10 @@ int main() {
 
         roca1.draw(window);
         roca2.draw(window);
+        roca3.draw(window);
+        roca4.draw(window);
         tronco1.draw(window);
+        tronco2.draw(window);
 
         for (const auto& projectile : projectiles) {
             projectile.draw(window);
