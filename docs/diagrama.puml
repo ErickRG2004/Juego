@@ -1,0 +1,14 @@
+@startuml Gotcha
+Class Juego
+Class Tronco
+Class Roca
+Class Proyectil
+Class Personaje{
++Disparar(Proyectil)
+}
+
+Juego "1"*--"2" Tronco
+Juego "1"*--"4" Roca
+Juego "1"*--"2" Personaje
+Personaje o-- Proyectil
+@enduml
