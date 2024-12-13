@@ -75,8 +75,8 @@ private:
 
     void updateImagePosition()
     {
-        float scaleFactorX = shape.getSize().x / 200;
-        float scaleFactorY = shape.getSize().y / 200;
+        float scaleFactorX = shape.getSize().x / 100;
+        float scaleFactorY = shape.getSize().y / 100;
         float scaleFactor = std::min(scaleFactorX, scaleFactorY);
         imageSprite.setScale(scaleFactor, scaleFactor);
 

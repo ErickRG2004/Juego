@@ -54,11 +54,11 @@ int main()
     }
 
     // Crear textos para mostrar vidas
-    sf::Text vidasP1("Vidas: 3", font, 20);
-    sf::Text vidasP2("Vidas: 3", font, 20);
+    sf::Text vidasP1("Vidas: 3", font, 35);
+    sf::Text vidasP2("Vidas: 3", font, 35);
 
     vidasP1.setPosition(20, 750);
-    vidasP2.setPosition(1100, 750);
+    vidasP2.setPosition(1050, 750);
 
     while (window.isOpen())
     {
