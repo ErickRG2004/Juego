@@ -1,3 +1,6 @@
+# GotCHA
+Gotcha es un juego 1v1 el cual consta de impactar a tu oponente 3 veces para causar su "Game Over"
+![IMG not found](./docs/Cap.png)
 # Manual del Programador #
 
 ## Índice 
